@@ -1,0 +1,259 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+}
+
+.breadcrumbLink {
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.breadcrumbLink:hover {
+  color: var(--gold-dark);
+}
+
+.breadcrumbSep {
+  color: var(--text-muted);
+}
+
+.breadcrumbCurrent {
+  color: var(--indigo);
+  font-weight: 700;
+}
+
+/* Form Card */
+.formCard {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+}
+
+.formHeader {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.formIcon {
+  width: 56px;
+  height: 56px;
+  background: var(--cream-light);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto var(--space-4);
+}
+
+.formTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--indigo);
+  margin-bottom: var(--space-2);
+}
+
+.formSubtitle {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--indigo);
+}
+
+.input,
+.select,
+.textarea {
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+  background: var(--white);
+  color: var(--text-primary);
+  direction: rtl;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.15);
+}
+
+.select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  background-size: 16px;
+  padding-left: 36px;
+}
+
+.textEditor {
+  padding: var(--space-4);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 200px;
+  direction: rtl;
+  transition: all var(--transition-fast);
+}
+
+.textEditor:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.15);
+}
+
+/* Type Grid */
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .typeGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.typeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.typeCard:hover {
+  border-color: var(--gold-light);
+  background: var(--cream-light);
+}
+
+.typeCardActive {
+  border-color: var(--gold) !important;
+  background: var(--cream-light) !important;
+  box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.15);
+}
+
+.typeIcon {
+  font-size: 1.5rem;
+}
+
+.typeLabel {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--indigo);
+}
+
+.typeDesc {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Upload Zone */
+.uploadZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  text-align: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.uploadZone:hover {
+  border-color: var(--gold);
+  background: var(--cream-light);
+}
+
+.uploadIcon {
+  font-size: 2rem;
+}
+
+.uploadText {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--indigo);
+}
+
+.uploadHint {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Error */
+.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* Actions */
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}

@@ -1,0 +1,108 @@
+.container {
+  border: 1.5px solid var(--cream-dark);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cream-light);
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s;
+}
+
+.container:focus-within {
+  border-color: var(--indigo);
+}
+
+.toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  background: var(--white);
+  border-bottom: 1px solid var(--cream-dark);
+  flex-wrap: wrap;
+}
+
+.toolbarBtn {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toolbarBtn:hover {
+  background: var(--cream-light);
+  color: var(--indigo);
+}
+
+.toolbarBtn.isActive {
+  background: var(--indigo);
+  color: white;
+}
+
+.toolbarBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toolbarDivider {
+  width: 1px;
+  background: var(--cream-dark);
+  margin: 0 4px;
+}
+
+.body {
+  padding: 16px;
+  min-height: 200px;
+  max-height: 500px;
+  overflow-y: auto;
+  cursor: text;
+}
+
+/* TipTap Editor Styles */
+:global(.tiptap) {
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+:global(.tiptap p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  float: right;
+  color: var(--text-muted);
+  pointer-events: none;
+  height: 0;
+}
+
+:global(.tiptap ul) {
+  list-style-type: disc;
+  padding-right: 24px;
+  margin: 8px 0;
+}
+
+:global(.tiptap ol) {
+  list-style-type: decimal;
+  padding-right: 24px;
+  margin: 8px 0;
+}
+
+:global(.tiptap blockquote) {
+  border-right: 3px solid var(--gold);
+  padding-right: 12px;
+  margin: 12px 0;
+  color: var(--text-secondary);
+  background: rgba(196, 162, 101, 0.05);
+}
+
+:global(.tiptap h2) {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--indigo);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}

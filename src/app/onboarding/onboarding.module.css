@@ -1,0 +1,240 @@
+.onboardingPage {
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Decoration */
+.onboardingBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bgOrb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.06;
+}
+
+.bgOrb1 {
+  width: 500px;
+  height: 500px;
+  background: var(--gold);
+  top: -200px;
+  right: -100px;
+}
+
+.bgOrb2 {
+  width: 400px;
+  height: 400px;
+  background: var(--indigo);
+  bottom: -150px;
+  left: -100px;
+}
+
+/* Card */
+.onboardingCard {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10) var(--space-8);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Progress */
+.progress {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.progressBar {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border-default);
+  transition: background var(--transition-base);
+}
+
+.progressBarActive {
+  background: var(--gold);
+}
+
+.progressBarDone {
+  background: var(--indigo);
+}
+
+/* Header */
+.stepIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  background: rgba(196, 162, 101, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: var(--space-5);
+}
+
+.stepTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--indigo);
+  margin-bottom: var(--space-2);
+}
+
+.stepDesc {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-8);
+}
+
+/* Form */
+.formGroup {
+  margin-bottom: var(--space-5);
+}
+
+.formLabel {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.formInput {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--cream-light);
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  min-height: 48px;
+}
+
+.formInput::placeholder {
+  color: var(--text-muted);
+}
+
+.formInput:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.1);
+  background: var(--white);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.btnPrimary {
+  flex: 1;
+  padding: var(--space-4);
+  background: var(--indigo);
+  color: var(--cream);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-base);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  min-height: 52px;
+}
+
+.btnPrimary:hover {
+  background: var(--indigo-light);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSkip {
+  padding: var(--space-4) var(--space-6);
+  background: none;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 52px;
+}
+
+.btnSkip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+
+/* Success */
+.successIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(91, 154, 107, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto var(--space-6);
+}
+
+.successTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--indigo);
+  text-align: center;
+  margin-bottom: var(--space-3);
+}
+
+.successDesc {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-8);
+}
+
+/* Error */
+.errorMsg {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(212, 100, 74, 0.08);
+  border: 1px solid rgba(212, 100, 74, 0.2);
+  border-radius: var(--radius-md);
+  color: #C44A3A;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-5);
+}

@@ -1,1 +1,297 @@
-@import "tailwindcss";
+/* ============================================
+   ممهور — نظام التصميم (Design System)
+   هوية أنيقة: Midnight Indigo + Vanilla Cream
+   ============================================ */
+
+/* Fonts loaded via next/font/google in layout.tsx */
+
+/* --- Design Tokens --- */
+:root {
+  /* Core Palette */
+  --indigo: #212842;
+  --indigo-deep: #181d33;
+  --indigo-light: #2d365a;
+  --indigo-soft: #3d4873;
+  --indigo-muted: #5a6490;
+
+  --cream: #F0E7D5;
+  --cream-light: #F7F2E8;
+  --cream-dark: #E5D9C3;
+  --cream-warm: #EDE3CE;
+
+  --white: #FDFBF7;
+  --black: #12152B;
+
+  /* Gold accent for "Mamhoor" seal/stamp theme */
+  --gold: #C4A265;
+  --gold-light: #D4BA85;
+  --gold-dark: #A88945;
+
+  /* Backgrounds */
+  --bg-primary: var(--white);
+  --bg-secondary: var(--cream-light);
+  --bg-surface: var(--cream);
+  --bg-surface-hover: var(--cream-dark);
+  --bg-elevated: var(--indigo);
+  --bg-accent: var(--indigo);
+
+  /* Borders */
+  --border-default: rgba(33, 40, 66, 0.12);
+  --border-subtle: rgba(33, 40, 66, 0.06);
+  --border-strong: rgba(33, 40, 66, 0.2);
+  --border-focus: var(--indigo);
+
+  /* Text */
+  --text-primary: var(--indigo);
+  --text-secondary: var(--indigo-soft);
+  --text-muted: var(--indigo-muted);
+  --text-inverse: var(--cream);
+  --text-on-dark: var(--cream-light);
+
+  /* Status Colors */
+  --status-draft: #5B7DB1;
+  --status-in-review: #C4944A;
+  --status-changes: #B8784A;
+  --status-pending: #7B6BA5;
+  --status-approved: #5B9A6B;
+  --status-published: #4A8A6B;
+  --status-archived: #8B8B8B;
+
+  /* Semantic Colors */
+  --success: #5B9A6B;
+  --success-bg: rgba(91, 154, 107, 0.08);
+  --warning: #C4944A;
+  --warning-bg: rgba(196, 148, 74, 0.08);
+  --error: #B85C5C;
+  --error-bg: rgba(184, 92, 92, 0.08);
+  --info: #5B7DB1;
+  --info-bg: rgba(91, 125, 177, 0.08);
+
+  /* Typography — using CSS vars from next/font */
+  --font-heading: var(--font-cairo), 'Cairo', sans-serif;
+  --font-body: var(--font-amiri), 'Amiri', serif;
+  --font-ui: var(--font-cairo), 'Cairo', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
+  --text-8xl: 6rem;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(33, 40, 66, 0.06);
+  --shadow-md: 0 4px 12px rgba(33, 40, 66, 0.08);
+  --shadow-lg: 0 8px 24px rgba(33, 40, 66, 0.10);
+  --shadow-xl: 0 16px 40px rgba(33, 40, 66, 0.12);
+  --shadow-2xl: 0 24px 60px rgba(33, 40, 66, 0.16);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+  --transition-spring: 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Z-index */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* Container */
+  --container-xl: 1200px;
+}
+
+/* --- CSS Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: var(--leading-normal);
+  direction: rtl;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: var(--leading-tight);
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-light); }
+::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--indigo-muted); }
+
+::selection { background: var(--indigo); color: var(--cream); }
+
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; height: auto; display: block; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; outline: none; }
+input, textarea, select { font: inherit; color: inherit; background: none; border: none; outline: none; }
+
+:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+
+/* --- Utilities --- */
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .container { padding-inline: var(--space-8); }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+/* --- Star Decoration --- */
+.star {
+  display: inline-block;
+  width: 16px; height: 16px;
+  background: var(--indigo);
+  clip-path: polygon(50% 0%, 61% 35%, 100% 50%, 61% 65%, 50% 100%, 39% 65%, 0% 50%, 39% 35%);
+}
+.star--cream { background: var(--cream); }
+.star--gold { background: var(--gold); }
+.star--sm { width: 10px; height: 10px; }
+.star--lg { width: 24px; height: 24px; }
+
+/* --- Animation Keyframes --- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(12px) rotate(-2deg); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes stampPress {
+  0% { transform: scale(1.3) rotate(-8deg); opacity: 0; }
+  50% { transform: scale(0.95) rotate(2deg); opacity: 1; }
+  70% { transform: scale(1.02) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes revealLine {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes tiltCard {
+  0%, 100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+  25% { transform: perspective(1000px) rotateY(-3deg) rotateX(2deg); }
+  75% { transform: perspective(1000px) rotateY(3deg) rotateX(-2deg); }
+}
+
+/* --- Global Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-heading);
+  font-weight: 600; font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  min-height: 44px;
+  cursor: pointer;
+  text-decoration: none; border: none;
+  letter-spacing: 0.01em;
+}
+
+.btn--primary { background: var(--indigo); color: var(--cream); }
+.btn--primary:hover { background: var(--indigo-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+.btn--ghost { background: transparent; color: var(--indigo); border: 1.5px solid var(--border-strong); }
+.btn--ghost:hover { background: rgba(33,40,66,0.04); border-color: var(--indigo); }
+
+.btn--cream { background: var(--cream); color: var(--indigo); }
+.btn--cream:hover { background: var(--cream-dark); }
+
+.btn--gold { background: var(--gold); color: var(--white); }
+.btn--gold:hover { background: var(--gold-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+.btn--sm { padding: var(--space-2) var(--space-4); font-size: var(--text-xs); min-height: 36px; }
+.btn--lg { padding: var(--space-4) var(--space-8); font-size: var(--text-base); min-height: 52px; }

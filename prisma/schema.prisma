@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Enums
+enum Role {
+  OWNER
+  ADMIN
+  PROJECT_MANAGER
+  CREATOR
+  REVIEWER
+  APPROVER
+}
+
+enum MaterialType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+enum MaterialStatus {
+  DRAFT
+  IN_REVIEW
+  CHANGES_REQUESTED
+  PENDING_APPROVAL
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CommentStatus {
+  UNRESOLVED
+  RESOLVED
+}
+
+// Models
+model User {
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  name               String?
+  passwordHash       String
+  role               Role     @default(CREATOR)
+  avatarUrl          String?
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  projectsOwned    Project[] @relation("ProjectOwner")
+  materialsCreated Material[] @relation("MaterialCreator")
+  comments         Comment[]
+  projectMembers   ProjectMember[]
+  passwordResetTokens PasswordResetToken[]
+  notifications    Notification[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  owner       User            @relation("ProjectOwner", fields: [ownerId], references: [id])
+  members     ProjectMember[]
+  materials   Material[]
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  role      Role     // Role specifically for this project
+  createdAt DateTime @default(now())
+
+  // Relations
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+
+model Material {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  content     String?        // For text content or metadata references
+  type        MaterialType
+  status      MaterialStatus @default(DRAFT)
+  version     Int            @default(1)
+  fileUrl     String?        // Link to S3/Cloud Storage object
+  projectId   String
+  creatorId   String
+  dueDate     DateTime?      // Deadline for approval
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  project      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator      User              @relation("MaterialCreator", fields: [creatorId], references: [id])
+  comments     Comment[]
+  transitions  StateTransition[]
+}
+
+model Comment {
+  id         String        @id @default(cuid())
+  content    String
+  status     CommentStatus @default(UNRESOLVED)
+  materialId String
+  authorId   String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relations
+  material   Material      @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  author     User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model StateTransition {
+  id          String          @id @default(cuid())
+  materialId  String
+  fromStatus  MaterialStatus?
+  toStatus    MaterialStatus
+  userId      String          // User who triggered this (store ID directly to avoid complex relations if deleted)
+  note        String?         // Optional note for transition
+  createdAt   DateTime        @default(now())
+
+  // Relations
+  material    Material        @relation(fields: [materialId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  link      String?  // Optional link to navigate when clicked
+  read      Boolean  @default(false)
+  type      String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
