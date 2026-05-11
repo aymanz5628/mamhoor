@@ -6,9 +6,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Missing GOOGLE_CLIENT_ID" }, { status: 500 });
   }
 
-  const host = request.headers.get("host") || "localhost:3000";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const redirectUri = `${protocol}://${host}/api/auth/google/callback`;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const redirectUri = `${baseUrl}/api/auth/google/callback`;
 
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   googleAuthUrl.searchParams.append("client_id", clientId);

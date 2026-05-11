@@ -6,8 +6,10 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
   if (!code) {
-    return NextResponse.redirect(new URL("/login?error=NoCode", request.url));
+    return NextResponse.redirect(`${baseUrl}/login?error=NoCode`);
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -17,9 +19,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Missing Google Credentials" }, { status: 500 });
   }
 
-  const host = request.headers.get("host") || "localhost:3000";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const redirectUri = `${protocol}://${host}/api/auth/google/callback`;
+  const redirectUri = `${baseUrl}/api/auth/google/callback`;
 
   try {
     // 1. Exchange code for tokens
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
     if (tokenData.error) {
       console.error("Token error:", tokenData);
-      return NextResponse.redirect(new URL("/login?error=GoogleAuthFailed", request.url));
+      return NextResponse.redirect(`${baseUrl}/login?error=GoogleAuthFailed`);
     }
 
     // 2. Get user info
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     const userData = await userResponse.json();
 
     if (!userData.email) {
-      return NextResponse.redirect(new URL("/login?error=NoEmailFromGoogle", request.url));
+      return NextResponse.redirect(`${baseUrl}/login?error=NoEmailFromGoogle`);
     }
 
     // 3. Find or create user
@@ -82,13 +82,13 @@ export async function GET(request: Request) {
 
     // 5. Redirect based on onboarding status
     if (user.onboardingComplete) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(`${baseUrl}/dashboard`);
     } else {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
+      return NextResponse.redirect(`${baseUrl}/onboarding`);
     }
 
   } catch (error) {
     console.error("Google Auth Error:", error);
-    return NextResponse.redirect(new URL("/login?error=InternalError", request.url));
+    return NextResponse.redirect(`${baseUrl}/login?error=InternalError`);
   }
 }
