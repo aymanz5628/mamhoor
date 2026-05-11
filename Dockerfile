@@ -14,6 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client
+ENV DATABASE_URL "file:./dev.db"
 RUN npx prisma generate
 
 # Build Next.js
@@ -26,6 +27,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV DATABASE_URL "file:./prisma/prod.db"
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
