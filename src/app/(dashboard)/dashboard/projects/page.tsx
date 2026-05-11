@@ -87,7 +87,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
         </div>
       ) : (
         <div className={styles.grid}>
-          {projects.map((project, i) => {
+          {projects.map((project: any, i: number) => {
             const config = statusConfig[project.status] || statusConfig.ACTIVE;
             const approvedCount = project.materials.length;
             const icon = projectIcons[i % projectIcons.length];
@@ -113,7 +113,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                     <span className={styles.metaValue}>{approvedCount}</span>
                   </div>
                   <div className={styles.teamAvatars}>
-                    {project.members.slice(0, 3).map((m, j) => (
+                    {project.members.slice(0, 3).map((m: any, j: number) => (
                       <div key={j} className={styles.avatar}>
                         {m.user.name?.charAt(0) || "?"}
                       </div>

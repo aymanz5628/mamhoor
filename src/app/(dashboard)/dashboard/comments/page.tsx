@@ -35,8 +35,8 @@ export default async function CommentsPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const unresolvedCount = comments.filter((c) => c.status === "UNRESOLVED").length;
-  const resolvedCount = comments.filter((c) => c.status === "RESOLVED").length;
+  const unresolvedCount = comments.filter((c: any) => c.status === "UNRESOLVED").length;
+  const resolvedCount = comments.filter((c: any) => c.status === "RESOLVED").length;
 
   return (
     <div className={styles.container}>
@@ -65,7 +65,7 @@ export default async function CommentsPage() {
           {/* قائمة التعليقات */}
           <div className={styles.threadsList}>
             <div className={styles.threadItems}>
-              {comments.map((comment) => (
+              {comments.map((comment: any) => (
                 <Link
                   key={comment.id}
                   href={`/dashboard/content/${comment.material.id}`}

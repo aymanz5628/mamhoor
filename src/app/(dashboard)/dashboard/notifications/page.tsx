@@ -161,9 +161,9 @@ export default async function NotificationsPage() {
         <div>
           <h1 className={styles.title}>
             الإشعارات
-            {notifications.filter(n => n.time.getTime() > recentCutoff).length > 0 && (
+            {notifications.filter((n: any) => n.time.getTime() > recentCutoff).length > 0 && (
               <span className={styles.unreadBadge}>
-                {notifications.filter(n => n.time.getTime() > recentCutoff).length}
+                {notifications.filter((n: any) => n.time.getTime() > recentCutoff).length}
               </span>
             )}
           </h1>

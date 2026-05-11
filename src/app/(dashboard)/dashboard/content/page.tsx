@@ -87,9 +87,9 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
 
   // إحصائيات الفلاتر
   const total = materials.length;
-  const inReview = materials.filter(m => m.status === "IN_REVIEW").length;
-  const changesReq = materials.filter(m => m.status === "CHANGES_REQUESTED").length;
-  const pending = materials.filter(m => m.status === "PENDING_APPROVAL").length;
+  const inReview = materials.filter((m: any) => m.status === "IN_REVIEW").length;
+  const changesReq = materials.filter((m: any) => m.status === "CHANGES_REQUESTED").length;
+  const pending = materials.filter((m: any) => m.status === "PENDING_APPROVAL").length;
 
   return (
     <div className={styles.container}>
@@ -138,7 +138,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
                 </tr>
               </thead>
               <tbody>
-                {materials.map((mat) => (
+                {materials.map((mat: any) => (
                   <tr key={mat.id}>
                     <td>
                       <div className={styles.materialName}>

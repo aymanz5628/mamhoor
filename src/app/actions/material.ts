@@ -32,7 +32,7 @@ export async function createMaterial(prevState: unknown, formData: FormData) {
 
   const parsed = CreateMaterialSchema.safeParse(rawData);
   if (!parsed.success) {
-    const firstError = parsed.error.errors?.[0]?.message;
+    const firstError = parsed.error.issues?.[0]?.message;
     return { error: firstError || "بيانات غير صالحة" };
   }
 
@@ -195,8 +195,8 @@ export async function updateMaterialStatus(materialId: string, newStatus: string
   });
 
   const notifyUsers = (roles: string[], message: string, type: "INFO"| "WARNING" | "SUCCESS" = "INFO") => {
-    const targetUsers = projectMembers.filter(m => roles.includes(m.role));
-    const allTargets = [...targetUsers.map(m => m.userId), material.project.ownerId];
+    const targetUsers = projectMembers.filter((m: any) => roles.includes(m.role));
+    const allTargets = [...targetUsers.map((m: any) => m.userId), material.project.ownerId];
     const uniqueTargets = Array.from(new Set(allTargets)).filter(id => id !== session.userId);
 
     const notifications = uniqueTargets.map(userId => ({

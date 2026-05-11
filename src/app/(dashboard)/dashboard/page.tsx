@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   });
 
   const statusMap: Record<string, number> = {};
-  statusCounts.forEach((s) => {
+  statusCounts.forEach((s: any) => {
     statusMap[s.status] = s._count;
   });
 
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
             )}
-            {recentMaterials.map((t) => (
+            {recentMaterials.map((t: any) => (
               <div key={t.id} className={styles.activityItem}>
                 <div className={styles.activityDot} style={{ background: statusColors[t.toStatus] || "var(--text-muted)" }} />
                 <div className={styles.activityBody}>

@@ -62,7 +62,7 @@ export function ResolveCommentButton({ commentId }: { commentId: string }) {
 
   return (
     <button
-      onClick={() => startTransition(() => resolveComment(commentId))}
+      onClick={() => startTransition(async () => { await resolveComment(commentId); })}
       disabled={isPending}
       style={{
         background: "none", border: "none", cursor: "pointer",

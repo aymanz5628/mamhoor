@@ -24,7 +24,7 @@ export async function inviteMember(prevState: any, formData: FormData) {
   const parsed = InviteMemberSchema.safeParse(rawData);
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message || "بيانات غير صالحة" };
+    return { error: parsed.error.issues[0]?.message || "بيانات غير صالحة" };
   }
 
   const { email, projectId, role } = parsed.data;
@@ -42,7 +42,7 @@ export async function inviteMember(prevState: any, formData: FormData) {
   }
 
   const isOwner = project.ownerId === session.userId;
-  const isProjectAdmin = project.members.some(m => m.role === "ADMIN");
+  const isProjectAdmin = project.members.some((m: any) => m.role === "ADMIN");
 
   if (!isOwner && !isProjectAdmin) {
     return { error: "ليس لديك صلاحية لإضافة أعضاء لهذا المشروع" };

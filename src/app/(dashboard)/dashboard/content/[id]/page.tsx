@@ -73,7 +73,7 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
     notFound(); // Not a member of the project
   }
 
-  const unresolvedComments = material.comments.filter(c => c.status === "UNRESOLVED").length;
+  const unresolvedComments = material.comments.filter((c: any) => c.status === "UNRESOLVED").length;
 
   return (
     <div className={styles.container}>
@@ -181,7 +181,7 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
               {material.comments.length === 0 ? (
                 <p style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)", padding: "var(--space-4) 0" }}>لا توجد تعليقات بعد</p>
               ) : (
-                material.comments.map((comment) => (
+                material.comments.map((comment: any) => (
                   <div key={comment.id} className={`${styles.commentItem} ${comment.status === "RESOLVED" ? styles.commentResolved : ""}`}>
                     <div className={styles.commentAvatar} style={{ background: comment.status === "RESOLVED" ? "var(--success)" : "var(--gold)" }}>
                       {comment.author.name?.charAt(0) || "?"}
@@ -217,7 +217,7 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
               {material.transitions.length === 0 ? (
                 <p style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>لا يوجد سجل تحولات</p>
               ) : (
-                material.transitions.map((t, i) => (
+                material.transitions.map((t: any, i: number) => (
                   <div key={i} className={styles.timelineItem}>
                     <div className={styles.timelineDot} />
                     <div className={styles.timelineContent}>

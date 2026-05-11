@@ -25,7 +25,7 @@ export async function addComment(prevState: unknown, formData: FormData) {
 
   const parsed = AddCommentSchema.safeParse(rawData);
   if (!parsed.success) {
-    const firstError = parsed.error.errors?.[0]?.message;
+    const firstError = parsed.error.issues?.[0]?.message;
     return { error: firstError || "بيانات غير صالحة" };
   }
 
@@ -41,7 +41,7 @@ export async function addComment(prevState: unknown, formData: FormData) {
 
   // التحقق من الصلاحية (المالك أو عضو في المشروع)
   const isOwner = material.project.ownerId === session.userId;
-  const isMember = material.project.members.some((m) => m.userId === session.userId);
+  const isMember = material.project.members.some((m: any) => m.userId === session.userId);
 
   if (!isOwner && !isMember) {
     return { error: "ليس لديك صلاحية للتعليق على هذه المادة" };

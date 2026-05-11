@@ -76,14 +76,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   });
 
   const isOwner = project.ownerId === session.userId;
-  const isMember = project.members.some(m => m.userId === session.userId);
+  const isMember = project.members.some((m: any) => m.userId === session.userId);
 
   if (!project || (!isOwner && !isMember)) {
     notFound();
   }
 
-  const approvedCount = project.materials.filter(m => m.status === "APPROVED").length;
-  const inReviewCount = project.materials.filter(m => m.status === "IN_REVIEW").length;
+  const approvedCount = project.materials.filter((m: any) => m.status === "APPROVED").length;
+  const inReviewCount = project.materials.filter((m: any) => m.status === "IN_REVIEW").length;
   const projectIcons = [
     <Rocket key="1" size={32} />, 
     <Video key="2" size={32} />, 
@@ -158,7 +158,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <p style={{ fontFamily: "var(--font-body)", color: "var(--text-muted)" }}>لا توجد مواد بعد</p>
               </div>
             ) : (
-              project.materials.map((mat) => (
+              project.materials.map((mat: any) => (
                 <Link key={mat.id} href={`/dashboard/content/${mat.id}`} className={styles.materialRow}>
                   <div className={styles.materialInfo}>
                     <div className={styles.materialIcon}>{typeIcons[mat.type] || <FileText size={20} />}</div>
@@ -195,7 +195,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
             </div>
             {/* الأعضاء */}
-            {project.members.map((member, i) => (
+            {project.members.map((member: any, i: number) => (
               <div key={i} className={styles.memberRow}>
                 <div className={styles.memberAvatar} style={{ background: `hsl(${(i + 1) * 60}, 45%, 55%)` }}>
                   {member.user.name?.charAt(0) || "?"}
