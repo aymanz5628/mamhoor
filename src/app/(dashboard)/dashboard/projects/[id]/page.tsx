@@ -75,10 +75,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     },
   });
 
+  if (!project) {
+    notFound();
+  }
+
   const isOwner = project.ownerId === session.userId;
   const isMember = project.members.some((m: any) => m.userId === session.userId);
 
-  if (!project || (!isOwner && !isMember)) {
+  if (!isOwner && !isMember) {
     notFound();
   }
 

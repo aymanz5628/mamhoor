@@ -62,8 +62,10 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
   });
 
   // Fetch user role based on RBAC
-  // But wait, the previous code rejected access if not owner: `material.project.ownerId !== session.userId`. 
   // Let's fix that too! A project member should be able to view the material.
+  if (!material) {
+    notFound();
+  }
   const isOwner = material.project.ownerId === session.userId;
   const member = material.project.members[0];
   const isCreator = material.creatorId === session.userId;
