@@ -25,7 +25,7 @@ export async function createProject(prevState: unknown, formData: FormData) {
 
   const parsed = CreateProjectSchema.safeParse(rawData);
   if (!parsed.success) {
-    const firstError = parsed.error.errors?.[0]?.message;
+    const firstError = parsed.error.issues?.[0]?.message;
     return { error: firstError || "بيانات غير صالحة" };
   }
 
