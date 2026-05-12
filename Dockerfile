@@ -53,7 +53,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy prisma config, schema AND the ready-made database
 RUN mkdir -p prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/prisma/prod.db ./prisma/prod.db
+COPY --from=builder --chown=nextjs:nodejs /app/prod.db ./prisma/prod.db
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 USER nextjs
