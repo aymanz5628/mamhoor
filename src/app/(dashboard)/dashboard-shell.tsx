@@ -93,7 +93,7 @@ export default function DashboardShell({ children, user }: DashboardLayoutProps)
       {/* Sidebar */}
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
         <div className={styles.sidebarHeader}>
-          <Link href="/" className={styles.sidebarLogo}>
+          <Link href="/dashboard" className={styles.sidebarLogo}>
             <MamhoorSeal size={32} />
             <span>ممهور</span>
           </Link>
