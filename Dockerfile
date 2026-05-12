@@ -1,33 +1,30 @@
 FROM node:22-alpine AS base
 
-# Install dependencies - include build tools for better-sqlite3 native compilation
+# Install dependencies with build tools for better-sqlite3
 FROM base AS deps
 RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Rebuild the source code only when needed
+# Build stage
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client and create database with all tables
 ENV DATABASE_URL "file:./prod.db"
-ENV SESSION_SECRET "build-time-secret-not-used-in-production"
+ENV SESSION_SECRET "build-time-secret"
 RUN npx prisma generate
 RUN npx prisma db push --accept-data-loss
 
-# Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# Production image
+# Production image - copy everything needed
 FROM base AS runner
 WORKDIR /app
 
-# Install runtime deps for better-sqlite3
 RUN apk add --no-cache libc6-compat
 
 ENV NODE_ENV production
@@ -38,33 +35,25 @@ ENV SESSION_SECRET "mamhoor-production-secret-2026-secure"
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+# Copy built app and all dependencies
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
 
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-RUN mkdir -p public/uploads
-RUN chown nextjs:nodejs public/uploads
-
-# Copy standalone app
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Copy native modules that standalone doesn't trace
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/bindings ./node_modules/bindings
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/file-uri-to-path ./node_modules/file-uri-to-path
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma/adapter-better-sqlite3 ./node_modules/@prisma/adapter-better-sqlite3
-
-# Copy prisma config, schema AND the ready-made database
+# Copy prisma files and database
 RUN mkdir -p prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prod.db ./prisma/prod.db
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+
+RUN mkdir -p public/uploads
+RUN chown nextjs:nodejs public/uploads
 
 USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+CMD ["npx", "next", "start", "-p", "3000"]
