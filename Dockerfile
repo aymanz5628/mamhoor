@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client and create database with all tables
-ENV DATABASE_URL "file:./prisma/prod.db"
+ENV DATABASE_URL "file:./prod.db"
 ENV SESSION_SECRET "build-time-secret-not-used-in-production"
 RUN npx prisma generate
 RUN npx prisma db push --skip-generate --accept-data-loss
@@ -29,7 +29,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV DATABASE_URL "file:./prisma/prod.db"
+ENV DATABASE_URL "file:./prod.db"
 ENV SESSION_SECRET "mamhoor-production-secret-2026-secure"
 
 RUN addgroup --system --gid 1001 nodejs
