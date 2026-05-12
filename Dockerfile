@@ -32,7 +32,7 @@ RUN apk add --no-cache libc6-compat
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV DATABASE_URL "file:./prod.db"
+ENV DATABASE_URL "file:./prisma/prod.db"
 ENV SESSION_SECRET "mamhoor-production-secret-2026-secure"
 
 RUN addgroup --system --gid 1001 nodejs
