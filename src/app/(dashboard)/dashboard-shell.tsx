@@ -172,10 +172,10 @@ export default function DashboardShell({ children, user }: DashboardLayoutProps)
 
           {/* Actions */}
           <div className={styles.headerActions}>
-            <button className={styles.headerIconBtn} aria-label="الإشعارات" style={{display: 'flex', alignItems: 'center'}}>
+            <Link href="/dashboard/notifications" className={styles.headerIconBtn} aria-label="الإشعارات" style={{display: 'flex', alignItems: 'center'}}>
               <Bell size={20} />
               <span className={styles.headerNotifDot} />
-            </button>
+            </Link>
           </div>
         </header>
 
