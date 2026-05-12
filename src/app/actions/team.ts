@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { Role } from "@prisma/client";
+import { sendInviteEmail } from "@/lib/email";
 
 const InviteMemberSchema = z.object({
   email: z.string().email("البريد الإلكتروني غير صحيح"),
@@ -94,6 +95,15 @@ export async function inviteMember(prevState: any, formData: FormData) {
       type: "SUCCESS",
     },
   });
+
+  // 6. Send an actual email to the user
+  const inviter = await prisma.user.findUnique({ where: { id: session.userId } });
+  await sendInviteEmail(
+    targetUser.email,
+    project.name,
+    inviter?.name || "زميلك",
+    role
+  );
 
   revalidatePath("/dashboard/team");
   revalidatePath(`/dashboard/projects/${projectId}`);
