@@ -13,12 +13,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
+# Generate Prisma Client and create build database
 ENV DATABASE_URL "file:./dev.db"
 RUN npx prisma generate
+RUN npx prisma db push --skip-generate --accept-data-loss
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV SESSION_SECRET "build-time-secret-not-used-in-production"
 RUN npm run build
 
 # Production image, copy all the files and run next
@@ -43,7 +45,7 @@ RUN chown nextjs:nodejs .next
 RUN mkdir -p public/uploads
 RUN chown nextjs:nodejs public/uploads
 
-# SQLite setup - create dir with full permissions BEFORE copy
+# SQLite setup - create dir with full permissions
 RUN mkdir -p /app/prisma
 RUN chown -R nextjs:nodejs /app/prisma
 
@@ -51,7 +53,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
 
-# Install prisma CLI for db push
+# Install prisma CLI for db push at runtime
 RUN npm install -g prisma
 
 USER nextjs
@@ -59,5 +61,4 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
-# Create database and start app - all inline to avoid script permission issues
 CMD ["sh", "-c", "echo '==> Creating database...' && prisma db push --skip-generate --accept-data-loss 2>&1 && echo '==> Database ready!' && exec node server.js"]
