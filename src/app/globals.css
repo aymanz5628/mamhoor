@@ -137,6 +137,50 @@
   --container-xl: 1200px;
 }
 
+[data-theme="dark"] {
+  /* Core Palette Inverted */
+  --indigo: #e1e4f3;
+  --indigo-deep: #f0f2fb;
+  --indigo-light: #c1c7e6;
+  --indigo-soft: #9aa2cc;
+  --indigo-muted: #737ba4;
+
+  --cream: #181d33;
+  --cream-light: #12152b;
+  --cream-dark: #212842;
+  --cream-warm: #1a2035;
+
+  --white: #0a0c1a;
+  --black: #fdfbf7;
+
+  /* Gold accent - slightly brighter for dark mode */
+  --gold: #d4ba85;
+  --gold-light: #e6d3a6;
+  --gold-dark: #c4a265;
+
+  /* Backgrounds */
+  --bg-primary: var(--white);
+  --bg-secondary: var(--cream-light);
+  --bg-surface: var(--cream);
+  --bg-surface-hover: var(--cream-dark);
+  --bg-elevated: var(--indigo);
+  --bg-accent: var(--indigo);
+
+  /* Borders */
+  --border-default: rgba(225, 228, 243, 0.12);
+  --border-subtle: rgba(225, 228, 243, 0.06);
+  --border-strong: rgba(225, 228, 243, 0.2);
+  --border-focus: var(--indigo);
+
+  /* Text */
+  --text-primary: var(--indigo);
+  --text-secondary: var(--indigo-soft);
+  --text-muted: var(--indigo-muted);
+  --text-inverse: var(--cream-light);
+  --text-on-dark: var(--cream-light);
+}
+
+
 /* --- CSS Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;

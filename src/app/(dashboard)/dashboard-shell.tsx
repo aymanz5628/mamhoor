@@ -5,7 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/app/actions/auth";
 import styles from "./dashboard.module.css";
-import { Home, Folder, FileText, KanbanSquare, MessageSquare, Users, Bell, Settings, LogOut, Search } from "lucide-react";
+import { Home, Folder, FileText, KanbanSquare, MessageSquare, Users, Bell, Settings, LogOut, Search, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 /* Seal Logo SVG */
 function MamhoorSeal({ size = 32 }: { size?: number }) {
@@ -75,6 +77,12 @@ type DashboardLayoutProps = {
 export default function DashboardShell({ children, user }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const userInitial = user.name ? user.name.charAt(0) : user.email.charAt(0);
   const displayName = user.name || user.email;
@@ -172,6 +180,14 @@ export default function DashboardShell({ children, user }: DashboardLayoutProps)
 
           {/* Actions */}
           <div className={styles.headerActions}>
+            <button 
+              className={styles.headerIconBtn} 
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label="تبديل المظهر" 
+              style={{display: 'flex', alignItems: 'center'}}
+            >
+              {mounted && theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <Link href="/dashboard/notifications" className={styles.headerIconBtn} aria-label="الإشعارات" style={{display: 'flex', alignItems: 'center'}}>
               <Bell size={20} />
               <span className={styles.headerNotifDot} />
