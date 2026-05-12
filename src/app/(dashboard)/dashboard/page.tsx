@@ -2,6 +2,8 @@ import styles from "../dashboard.module.css";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { FileText, Hourglass, CheckCircle, Users } from "lucide-react";
+import { StatusPieChart, ActivityBarChart } from "./dashboard-charts";
+import { format, subDays } from "date-fns";
 
 export default async function DashboardPage() {
   const session = await verifySession();
@@ -50,7 +52,7 @@ export default async function DashboardPage() {
     statusMap[s.status] = s._count;
   });
 
-  // ترجمة الحالات
+  // ترجمة الحالات والألوان للرسم البياني
   const statusLabels: Record<string, string> = {
     DRAFT: "مسودة",
     IN_REVIEW: "قيد المراجعة",
@@ -59,6 +61,18 @@ export default async function DashboardPage() {
     APPROVED: "معتمد",
     PUBLISHED: "منشور",
     ARCHIVED: "مؤرشف",
+  };
+
+  // استخدمنا ألوان Hex بدلاً من متغيرات CSS لأن Recharts يتطلبها للـ Tooltip والـ Cell أحياناً
+  // ولكن يمكننا استخدام متغيرات CSS إذا تعاملنا معها بحذر، سنستخدم ألوان واضحة
+  const pieColors: Record<string, string> = {
+    DRAFT: "#94a3b8", // slate-400
+    IN_REVIEW: "#3b82f6", // blue-500
+    CHANGES_REQUESTED: "#f59e0b", // amber-500
+    PENDING_APPROVAL: "#eab308", // yellow-500
+    APPROVED: "#10b981", // emerald-500
+    PUBLISHED: "#059669", // emerald-600
+    ARCHIVED: "#64748b", // slate-500
   };
 
   const statusColors: Record<string, string> = {
@@ -81,6 +95,40 @@ export default async function DashboardPage() {
     ARCHIVED: "مؤرشف",
   };
 
+  const statusData = Object.keys(statusLabels).map(key => ({
+    name: statusLabels[key],
+    value: statusMap[key] || 0,
+    color: pieColors[key]
+  }));
+
+  // حساب نشاطات آخر 7 أيام
+  const last7Days = Array.from({ length: 7 }).map((_, i) => {
+    const d = subDays(new Date(), 6 - i);
+    return {
+      date: format(d, 'MM/dd'),
+      startOfDay: new Date(d.setHours(0, 0, 0, 0)),
+      endOfDay: new Date(d.setHours(23, 59, 59, 999))
+    };
+  });
+
+  const recentTransitions = await prisma.stateTransition.findMany({
+    where: { 
+      material: { project: projectWhere },
+      createdAt: { gte: last7Days[0].startOfDay }
+    },
+    select: { createdAt: true }
+  });
+
+  const activityData = last7Days.map(day => {
+    const count = recentTransitions.filter(t => 
+      t.createdAt >= day.startOfDay && t.createdAt <= day.endOfDay
+    ).length;
+    return {
+      date: day.date,
+      count
+    };
+  });
+
   function timeAgo(date: Date): string {
     const diff = Date.now() - date.getTime();
     const mins = Math.floor(diff / 60000);
@@ -92,7 +140,6 @@ export default async function DashboardPage() {
     return `منذ ${days} يوم`;
   }
 
-  // عندما لا توجد بيانات — عرض حالة فارغة
   const isEmpty = totalMaterials === 0 && projects === 0;
 
   return (
@@ -146,61 +193,56 @@ export default async function DashboardPage() {
 
       {/* Content Grid */}
       <div className={styles.contentGrid}>
-        {/* Activity Feed */}
+        {/* Status Distribution Chart */}
         <div className={styles.dashCard}>
-          <h2 className={styles.sectionCardTitle}>آخر النشاطات</h2>
-          <div className={styles.activityList}>
-            {recentMaterials.length === 0 && (
-              <div className={styles.activityItem}>
-                <div className={styles.activityDot} style={{ background: "var(--text-muted)" }} />
-                <div className={styles.activityBody}>
-                  <p className={styles.activityText}>لا توجد نشاطات بعد. ابدأ بإنشاء مشروع ورفع مادة!</p>
+          <h2 className={styles.sectionCardTitle}>توزيع حالات المواد</h2>
+          <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
+            <StatusPieChart statusData={statusData} />
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+              {statusData.filter(d => d.value > 0).map(d => (
+                <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: d.color }}></span>
+                  {d.name} ({d.value})
                 </div>
-              </div>
-            )}
-            {recentMaterials.map((t: any) => (
-              <div key={t.id} className={styles.activityItem}>
-                <div className={styles.activityDot} style={{ background: statusColors[t.toStatus] || "var(--text-muted)" }} />
-                <div className={styles.activityBody}>
-                  <p className={styles.activityText}>
-                    <span className={styles.activityUser}>{t.material.title}</span>{" "}
-                    انتقلت إلى {transitionLabels[t.toStatus] || t.toStatus}
-                    {t.note && ` — ${t.note}`}
-                  </p>
-                  <span className={styles.activityTime}>{timeAgo(t.createdAt)}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Status Distribution */}
-        <div className={styles.dashCard}>
-          <h2 className={styles.sectionCardTitle}>توزيع الحالات</h2>
-          <div className={styles.activityList}>
-            {Object.entries(statusLabels).map(([key, label]) => {
-              const count = statusMap[key] || 0;
-              if (isEmpty && count === 0) return null;
-              return (
-                <div key={key} className={styles.activityItem}>
-                  <div className={styles.activityDot} style={{ background: statusColors[key] }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Activity Feed */}
+          <div className={styles.dashCard}>
+            <h2 className={styles.sectionCardTitle}>آخر النشاطات</h2>
+            <div className={styles.activityList}>
+              {recentMaterials.length === 0 && (
+                <div className={styles.activityItem}>
+                  <div className={styles.activityDot} style={{ background: "var(--text-muted)" }} />
                   <div className={styles.activityBody}>
-                    <p className={styles.activityText}>
-                      <span className={styles.activityUser}>{label}</span>
-                    </p>
-                    <span className={styles.activityTime}>{count} {count === 1 ? "مادة" : count === 2 ? "مادتان" : "مواد"}</span>
+                    <p className={styles.activityText}>لا توجد نشاطات بعد. ابدأ بإنشاء مشروع ورفع مادة!</p>
                   </div>
                 </div>
-              );
-            })}
-            {isEmpty && (
-              <div className={styles.activityItem}>
-                <div className={styles.activityDot} style={{ background: "var(--text-muted)" }} />
-                <div className={styles.activityBody}>
-                  <p className={styles.activityText}>لا توجد مواد بعد</p>
+              )}
+              {recentMaterials.map((t: any) => (
+                <div key={t.id} className={styles.activityItem}>
+                  <div className={styles.activityDot} style={{ background: statusColors[t.toStatus] || "var(--text-muted)" }} />
+                  <div className={styles.activityBody}>
+                    <p className={styles.activityText}>
+                      <span className={styles.activityUser}>{t.material.title}</span>{" "}
+                      انتقلت إلى {transitionLabels[t.toStatus] || t.toStatus}
+                      {t.note && ` — ${t.note}`}
+                    </p>
+                    <span className={styles.activityTime}>{timeAgo(t.createdAt)}</span>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
+          </div>
+
+          {/* Activity Bar Chart */}
+          <div className={styles.dashCard}>
+            <h2 className={styles.sectionCardTitle}>معدل الإنجاز والتحديثات (آخر 7 أيام)</h2>
+            <ActivityBarChart activityData={activityData} />
           </div>
         </div>
       </div>
