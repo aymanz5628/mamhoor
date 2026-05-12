@@ -1,8 +1,8 @@
 FROM node:22-alpine AS base
 
-# Install dependencies only when needed
+# Install dependencies - include build tools for better-sqlite3 native compilation
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -26,6 +26,9 @@ RUN npm run build
 # Production image
 FROM base AS runner
 WORKDIR /app
+
+# Install runtime deps for better-sqlite3
+RUN apk add --no-cache libc6-compat
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
