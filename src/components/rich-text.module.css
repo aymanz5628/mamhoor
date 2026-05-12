@@ -1,74 +1,106 @@
 .container {
-  border: 1.5px solid var(--cream-dark);
-  border-radius: 8px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: var(--cream-light);
+  background: var(--bg-surface);
   display: flex;
   flex-direction: column;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .container:focus-within {
   border-color: var(--indigo);
+  box-shadow: 0 0 0 2px rgba(33, 40, 66, 0.1);
 }
 
 .toolbar {
   display: flex;
-  gap: 4px;
-  padding: 8px;
-  background: var(--white);
-  border-bottom: 1px solid var(--cream-dark);
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
   flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toolbarSpacer {
+  flex-grow: 1;
 }
 
 .toolbarBtn {
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 6px;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
 }
 
-.toolbarBtn:hover {
-  background: var(--cream-light);
+.toolbarBtn:hover:not(:disabled) {
+  background: var(--border-subtle);
   color: var(--indigo);
 }
 
 .toolbarBtn.isActive {
   background: var(--indigo);
-  color: white;
+  color: var(--cream-light);
 }
 
 .toolbarBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .toolbarDivider {
   width: 1px;
-  background: var(--cream-dark);
+  height: 24px;
+  background: var(--border-strong);
   margin: 0 4px;
 }
 
 .body {
-  padding: 16px;
-  min-height: 200px;
-  max-height: 500px;
+  padding: 24px 32px;
+  min-height: 250px;
+  max-height: 600px;
   overflow-y: auto;
   cursor: text;
+  background: var(--bg-primary);
+}
+
+.footer {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: flex-end;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.footerCount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* TipTap Editor Styles */
 :global(.tiptap) {
   outline: none;
   font-family: var(--font-body);
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-primary);
 }
 
 :global(.tiptap p.is-editor-empty:first-child::before) {
@@ -77,32 +109,73 @@
   color: var(--text-muted);
   pointer-events: none;
   height: 0;
+  font-style: italic;
 }
 
 :global(.tiptap ul) {
   list-style-type: disc;
   padding-right: 24px;
-  margin: 8px 0;
+  margin: 12px 0;
 }
 
 :global(.tiptap ol) {
   list-style-type: decimal;
   padding-right: 24px;
-  margin: 8px 0;
+  margin: 12px 0;
 }
 
 :global(.tiptap blockquote) {
-  border-right: 3px solid var(--gold);
-  padding-right: 12px;
-  margin: 12px 0;
+  border-right: 4px solid var(--gold);
+  padding-right: 16px;
+  margin: 16px 0;
   color: var(--text-secondary);
   background: rgba(196, 162, 101, 0.05);
+  font-style: italic;
 }
 
 :global(.tiptap h2) {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: var(--indigo);
-  margin-top: 24px;
-  margin-bottom: 12px;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+:global(.tiptap pre) {
+  background: var(--indigo-deep);
+  color: var(--cream-light);
+  font-family: monospace;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin: 16px 0;
+  overflow-x: auto;
+  direction: ltr;
+  text-align: left;
+}
+
+:global(.tiptap code) {
+  background: rgba(33, 40, 66, 0.06);
+  color: var(--error);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: monospace;
+}
+
+:global(.tiptap pre code) {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.editorLink {
+  color: var(--gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.editorLink:hover {
+  color: var(--gold);
 }
