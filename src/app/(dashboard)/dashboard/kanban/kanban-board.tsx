@@ -8,7 +8,7 @@ import styles from "./kanban.module.css";
 import { updateMaterialStatus } from "@/app/actions/material";
 import { getDeadlineColor, formatRemainingTime } from "@/lib/deadline";
 
-import { FileText, Image as ImageIcon, Film, Mic, MessageSquare, Clock } from "lucide-react";
+import { FileText, Image as ImageIcon, Film, Mic, MessageSquare, Clock, GripVertical } from "lucide-react";
 
 type MaterialWithRelations = {
   id: string;
@@ -179,12 +179,26 @@ export default function KanbanBoard({ initialMaterials }: KanbanBoardProps) {
                               className={styles.card}
                               style={{
                                 cursor: 'pointer',
-                                ...status === "CHANGES_REQUESTED" ? { borderColor: "var(--status-changes)", borderLeftWidth: "4px" } : {}
+                                position: 'relative',
+                                transform: snapshot.isDragging ? 'rotate(-2deg) scale(1.02)' : 'none',
+                                boxShadow: snapshot.isDragging ? '0 15px 30px rgba(0,0,0,0.15)' : 'var(--shadow-sm)',
+                                zIndex: snapshot.isDragging ? 999 : 1,
+                                transition: 'transform 0.1s ease, box-shadow 0.1s ease',
+                                ...(status === "CHANGES_REQUESTED" ? { borderColor: "var(--status-changes)", borderLeftWidth: "4px" } : {})
                               }}
                             >
-                              <div className={styles.cardHeader}>
+                              <div className={styles.cardHeader} style={{ position: "relative" }}>
                                 <span className={styles.cardProject}>{material.project.name}</span>
-                                <span className={styles.cardType}>{typeIcons[material.type]} {typeLabels[material.type]}</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                  <span className={styles.cardType}>{typeIcons[material.type]} {typeLabels[material.type]}</span>
+                                  <div 
+                                    className="drag-handle" 
+                                    style={{ color: "var(--border-strong)", cursor: "grab" }}
+                                    title="اسحب الكرت من هنا"
+                                  >
+                                    <GripVertical size={16} />
+                                  </div>
+                                </div>
                               </div>
                               <h3 className={styles.cardTitle}>{material.title}</h3>
                               
