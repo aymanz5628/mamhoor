@@ -60,6 +60,7 @@ model User {
   projectMembers   ProjectMember[]
   passwordResetTokens PasswordResetToken[]
   notifications    Notification[]
+  approvals        Approval[]
 }
 
 model Project {
@@ -111,6 +112,22 @@ model Material {
   creator      User              @relation("MaterialCreator", fields: [creatorId], references: [id])
   comments     Comment[]
   transitions  StateTransition[]
+  approvals    Approval[]
+}
+
+model Approval {
+  id         String   @id @default(cuid())
+  materialId String
+  userId     String
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([materialId, userId])
 }
 
 model Comment {

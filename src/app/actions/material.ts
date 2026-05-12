@@ -239,3 +239,99 @@ export async function updateMaterialStatus(materialId: string, newStatus: string
 
   return { success: true };
 }
+
+// ============================================
+// نظام الاعتمادات المتعددة — Multi-Approval System
+// ============================================
+
+export async function toggleApproval(materialId: string, status: "APPROVED" | "REJECTED" | "PENDING") {
+  const session = await verifySession();
+  
+  await prisma.approval.upsert({
+    where: {
+      materialId_userId: {
+        materialId,
+        userId: session.userId,
+      }
+    },
+    update: { status },
+    create: {
+      materialId,
+      userId: session.userId,
+      status
+    }
+  });
+
+  // التحقق مما إذا كان الجميع قد اعتمد
+  const allApprovals = await prisma.approval.findMany({
+    where: { materialId }
+  });
+
+  const allApproved = allApprovals.length > 0 && allApprovals.every((a: any) => a.status === "APPROVED");
+
+  if (allApproved) {
+    // إذا وافق الجميع، انقل المادة لـ APPROVED تلقائياً
+    await updateMaterialStatus(materialId, "APPROVED", "تم الاعتماد بالإجماع من جميع المعتمدين");
+  } else if (status === "REJECTED") {
+    // إذا رفض أي شخص، أعدها لطلب التعديلات
+    await updateMaterialStatus(materialId, "CHANGES_REQUESTED", "تم رفض الاعتماد من أحد المعتمدين وطلب تعديلات");
+  }
+
+  revalidatePath(`/dashboard/content/${materialId}`);
+  revalidatePath("/dashboard/kanban");
+  return { success: true };
+}
+
+export async function assignApprover(materialId: string, userId: string) {
+  const session = await verifySession();
+  
+  // التأكد أن المستخدم له صلاحية إضافة معتمد (مالك أو مدير)
+  const material = await prisma.material.findUnique({
+    where: { id: materialId },
+    include: { project: { include: { members: { where: { userId: session.userId } } } } }
+  });
+
+  if (!material) return { error: "المادة غير موجودة" };
+  const isOwner = material.project.ownerId === session.userId;
+  const userRole = material.project.members[0]?.role;
+  if (!isOwner && !["ADMIN", "PROJECT_MANAGER"].includes(userRole as string)) {
+    return { error: "لا تملك صلاحية إضافة معتمدين" };
+  }
+
+  try {
+    await prisma.approval.create({
+      data: { materialId, userId, status: "PENDING" }
+    });
+    revalidatePath(`/dashboard/content/${materialId}`);
+    return { success: true };
+  } catch (e) {
+    return { error: "المستخدم معين كمعتمد مسبقاً" };
+  }
+}
+
+export async function removeApprover(materialId: string, userId: string) {
+  const session = await verifySession();
+  
+  const material = await prisma.material.findUnique({
+    where: { id: materialId },
+    include: { project: { include: { members: { where: { userId: session.userId } } } } }
+  });
+
+  if (!material) return { error: "المادة غير موجودة" };
+  const isOwner = material.project.ownerId === session.userId;
+  const userRole = material.project.members[0]?.role;
+  if (!isOwner && !["ADMIN", "PROJECT_MANAGER"].includes(userRole as string)) {
+    return { error: "لا تملك صلاحية إزالة معتمدين" };
+  }
+
+  try {
+    await prisma.approval.delete({
+      where: { materialId_userId: { materialId, userId } }
+    });
+    revalidatePath(`/dashboard/content/${materialId}`);
+    return { success: true };
+  } catch (e) {
+    return { error: "خطأ في الإزالة" };
+  }
+}
+
