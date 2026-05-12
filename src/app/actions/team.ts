@@ -84,6 +84,17 @@ export async function inviteMember(prevState: any, formData: FormData) {
     },
   });
 
+  // 5. Create an in-app notification for the invited user
+  await prisma.notification.create({
+    data: {
+      userId: targetUser.id,
+      title: "دعوة انضمام لمشروع",
+      message: `تمت إضافتك إلى مشروع "${project.name}" بصلاحية ${role}.`,
+      link: `/dashboard/projects/${project.id}`,
+      type: "SUCCESS",
+    },
+  });
+
   revalidatePath("/dashboard/team");
   revalidatePath(`/dashboard/projects/${projectId}`);
 
