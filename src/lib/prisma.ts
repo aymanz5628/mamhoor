@@ -8,8 +8,11 @@ declare global {
 }
 
 function createPrismaClient() {
+  const dbUrl = process.env.DATABASE_URL || "file:./dev.db";
+  console.log("[Prisma] Connecting to database:", dbUrl);
+  
   const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL || "file:./dev.db",
+    url: dbUrl,
   });
 
   return new PrismaClient({

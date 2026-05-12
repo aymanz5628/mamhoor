@@ -87,8 +87,10 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${baseUrl}/onboarding`);
     }
 
-  } catch (error) {
-    console.error("Google Auth Error:", error);
+  } catch (error: any) {
+    console.error("Google Auth Error:", error?.message || error);
+    console.error("Error code:", error?.code);
+    console.error("Error stack:", error?.stack);
     return NextResponse.redirect(`${baseUrl}/login?error=InternalError`);
   }
 }
