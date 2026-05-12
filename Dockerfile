@@ -54,6 +54,5 @@ RUN chown nextjs:nodejs public/uploads
 USER nextjs
 
 EXPOSE 3000
-ENV PORT 3000
 
-CMD ["npx", "next", "start", "-p", "3000"]
+CMD ["sh", "-c", "npx next start -p ${PORT:-3000}"]
