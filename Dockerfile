@@ -2,7 +2,7 @@ FROM node:22-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat python3 make g++
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -17,7 +17,7 @@ COPY . .
 ENV DATABASE_URL "file:./prod.db"
 ENV SESSION_SECRET "build-time-secret-not-used-in-production"
 RUN npx prisma generate
-RUN npx prisma db push --skip-generate --accept-data-loss
+RUN npx prisma db push --accept-data-loss
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -47,10 +47,11 @@ RUN chown nextjs:nodejs public/uploads
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma schema AND the ready-made database
+# Copy prisma config, schema AND the ready-made database
 RUN mkdir -p prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/prod.db ./prisma/prod.db
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 USER nextjs
 
