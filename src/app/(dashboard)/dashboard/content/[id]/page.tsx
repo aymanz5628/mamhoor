@@ -3,7 +3,7 @@ import Link from "next/link";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { AddCommentForm, ResolveCommentButton, StatusActions } from "./material-actions";
+import { AddCommentForm, ResolveCommentButton, StatusActions, ApprovalActions } from "./material-actions";
 import { getDeadlineColor, formatRemainingTime } from "@/lib/deadline";
 import { FileText, Image as ImageIcon, Film, Mic, Folder, Paperclip, Download, MessageSquare, History, Info, Package, GitCommit, User, Calendar, Clock } from "lucide-react";
 
@@ -57,6 +57,9 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
       },
       transitions: {
         orderBy: { createdAt: "asc" },
+      },
+      approvals: {
+        include: { user: { select: { name: true } } },
       },
     },
   });
@@ -213,7 +216,14 @@ export default async function MaterialDetailPage({ params }: { params: Promise<{
 
         {/* سجل التحولات */}
         <div className={styles.sideColumn}>
-          <div className={styles.timelineSection}>
+          <ApprovalActions 
+            materialId={material.id} 
+            approvals={material.approvals || []} 
+            currentUserId={session.userId} 
+            canManageApprovers={isOwner || ["ADMIN", "PROJECT_MANAGER"].includes(userRole as string)} 
+          />
+
+          <div className={styles.timelineSection} style={{ marginTop: "var(--space-4)" }}>
             <h2 className={styles.sectionTitle} style={{display: 'flex', alignItems: 'center', gap: '8px'}}><History size={20} /> سجل الحالات</h2>
             <div className={styles.timeline}>
               {material.transitions.length === 0 ? (
